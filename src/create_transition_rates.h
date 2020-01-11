@@ -45,9 +45,11 @@ void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vecto
         mat segment_transitions ;
         if ( recombination_rate[p] > 0.49 ) {
             segment_transitions = exp_matrix( site_transitions, 2 ) ;
+            // segment_transitions = expmat(site_transitions);
         }
         else {
             segment_transitions = exp_matrix( site_transitions, positions[p] - positions[p-1] ) ;
+            // segment_transitions = expmat(site_transitions);
         }
                 
         /// population transitions by summing across all routes
@@ -66,7 +68,7 @@ void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vecto
 }
 
 //// create all transition rates between ancestry types for a single chromosome
-mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<double> ancestry_proportion ) {
+mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<double> ancestry_proportion, bool gc ) {
     
     /// determine ancestry proportions based on the fraction of remainder
     for ( int p = 0 ; p < admixture_pulses.size() ; p ++ ) {
@@ -87,7 +89,16 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
     }
 
     /// matrix to hold transition rates
-    mat transition_rates( admixture_pulses.size(), admixture_pulses.size(), fill::zeros ) ;
+    int transition_rows;
+    int transition_cols;
+    if (gc == false) {
+        transition_rows = admixture_pulses.size();
+        transition_cols = admixture_pulses.size();
+    } else {
+        transition_rows = 2*admixture_pulses.size();
+        transition_cols = 2*admixture_pulses.size();
+    }
+    mat transition_rates( transition_rows, transition_cols, fill::zeros ) ;
     
     /// iterate through all states
     for ( int s1 = 0 ; s1 < admixture_pulses.size() ; s1 ++ ) {
@@ -124,8 +135,13 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
                     if ( s2 != 0 ) {
                         rate *= admixture_pulses[s2].proportion ;
                     }
-                    
-                    transition_rates(admixture_pulses[s2].entry_order,admixture_pulses[s1].entry_order) += rate ;
+                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order) += rate ;
+                }
+                // Add the gene conversion rate for transition into a GC tract
+                if (gc == true && admixture_pulses.size() == 2 && transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order) > 0) {
+                    // cout << "Hitting new transition block" << endl;
+                    transition_rates(admixture_pulses[s2].entry_order + admixture_pulses.size(), admixture_pulses[s1].entry_order) = transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
+                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + admixture_pulses.size()) = 0.1;
                 }
             }
             else {
@@ -157,9 +173,19 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
                     /// and augment by this rate for this epoch
                     transition_rates(admixture_pulses[s2].entry_order,admixture_pulses[s1].entry_order) += rate ;
                 }
+                // Add the gene conversion rates
+                if (gc == true && admixture_pulses.size() == 2 && transition_rates(admixture_pulses[s2].entry_order,admixture_pulses[s1].entry_order)) {
+                        transition_rates(admixture_pulses[s2].entry_order + admixture_pulses.size(), admixture_pulses[s1].entry_order) = transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
+                        transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + admixture_pulses.size()) = 0.1;
+                }
             }
         }
     }
+    // The rates of leaving GC tract and returning to
+//    if (gc == true && admixture_pulses.size() == 2) {
+//        transition_rates(admixture_pulses[0].entry_order + admixture_pulses.size(), admixture_pulses[1].entry_order) = 1/500;
+//        transition_rates(admixture_pulses[1].entry_order + admixture_pulses.size(), admixture_pulses[0].entry_order) = 1/500;
+//    }
         
     return transition_rates.t() ;
 }

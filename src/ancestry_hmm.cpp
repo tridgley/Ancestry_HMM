@@ -87,7 +87,7 @@ int main ( int argc, char *argv[] ) {
     /// now create initial state list
     for ( int m = 0 ; m < markov_chain_information.size() ; m ++ ) {
         for ( int p = 0 ; p < markov_chain_information[m].sample_ploidy_path.size() ; p ++ ) {
-            create_initial_states( markov_chain_information.at(m).sample_ploidy_path[p].ploidy, options.ancestry_pulses, state_list ) ;
+            create_initial_states( markov_chain_information.at(m).sample_ploidy_path[p].ploidy, options.ancestry_pulses, state_list, options.gc ) ;
         }
     }
     
@@ -183,10 +183,14 @@ int main ( int argc, char *argv[] ) {
     
     /// create transition rates for the optimal or supplied set of pulses
     cerr << endl << "creating per morgan transition rates\t\t" ; t = clock();
-    mat transition_rates = create_transition_rates( optimum, options.ne, options.ancestry_proportion ) ;
+    mat transition_rates = create_transition_rates( optimum, options.ne, options.ancestry_proportion, options.gc ) ;
     
     /// create transition information
-    cerr << (double) (clock() - t) << " ms" << endl << "creating transition matrices\t\t\t" ; t = clock();
+    cerr << (double) (clock() - t) << " ms" << endl;
+    cout << "TR_LOG: transition_rates: " << endl;
+    transition_rates.print();
+    cerr << endl;
+    cerr << "creating transition matrices\t\t\t" ; t = clock();
     map<int,vector<mat> > transition_matrix ;
     for ( int m = 0 ; m < markov_chain_information.size() ; m ++ ) {
         create_transition_matrix( transition_matrix, transition_matrix_information[markov_chain_information.at(m).number_chromosomes], recombination_rate, position, markov_chain_information.at(m).number_chromosomes, transition_rates ) ;
@@ -208,7 +212,10 @@ int main ( int argc, char *argv[] ) {
 
     /// output forward-backward full probability distribution by default
     else {
-        cerr << (double) (clock() - t) << " ms" << endl << "computing forward probabilities\t" ; t = clock() ;
+        cerr << (double) (clock() - t) << " ms" << endl;
+        cout << "TR_LOG: transition_matrix[2][0]: " << endl;
+        transition_matrix[2][1].print();
+        cerr << "computing forward probabilities\t" ; t = clock() ;
         double lnl = 0 ;
         for ( int m = 0 ; m < markov_chain_information.size() ; m ++ ) {
             lnl += markov_chain_information[m].compute_forward_probabilities( transition_matrix, interploidy_transitions ) ;

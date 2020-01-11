@@ -56,7 +56,10 @@ public:
     bool output_pulses ;
     
     /// error rates specifed
-    bool error_rates ; 
+    bool error_rates ;
+    
+    // include gene conversion in the model
+    bool gc;
     
     /// input file name
     string input_file ;
