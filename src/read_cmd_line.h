@@ -23,6 +23,8 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
     
     // Make ancestral inference without gene conversion by default
     gc = false;
+    gc_mean_dist = 0.001;
+    gc_rate = 0.001;
     
     /// error rates
     error_rates = false ;
@@ -124,6 +126,8 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
         // for each ancestry type, include another pulse
         if (strcmp(argv[i],"-gc") == 0) {
             gc = true;
+            gc_mean_dist = atof(argv[++i]);
+            gc_rate = atof(argv[++i]);
         }
     
         //// for each ancestry type, set the total ancestry fraction
@@ -225,10 +229,6 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
         if ( strcmp(argv[i],"--fix") == 0 ) {
             ancestral_fixed = true ;
         }
-    }
-    
-    for (int i = 0; i < ancestry_pulses.size(); ++i) {
-        
     }
     
     if ( input_file == "null" ) {

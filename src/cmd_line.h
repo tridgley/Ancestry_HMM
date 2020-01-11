@@ -58,8 +58,14 @@ public:
     /// error rates specifed
     bool error_rates ;
     
-    // include gene conversion in the model
+    // the model will infer gene conversion tracts as well.
     bool gc;
+    
+    // the mean length (in morgans) of gene conversions tracts.
+    double gc_mean_dist;
+    
+    // the rate of gene conversion in the model species.
+    double gc_rate;
     
     /// input file name
     string input_file ;

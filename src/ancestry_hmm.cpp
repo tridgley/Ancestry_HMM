@@ -183,11 +183,11 @@ int main ( int argc, char *argv[] ) {
     
     /// create transition rates for the optimal or supplied set of pulses
     cerr << endl << "creating per morgan transition rates\t\t" ; t = clock();
-    mat transition_rates = create_transition_rates( optimum, options.ne, options.ancestry_proportion, options.gc ) ;
+    mat transition_rates = create_transition_rates( optimum, options.ne, options.ancestry_proportion, options.gc, options.gc_mean_dist) ;
     
     /// create transition information
     cerr << (double) (clock() - t) << " ms" << endl;
-    cout << "TR_LOG: transition_rates: " << endl;
+    cout << "\n(TR_LOG) transition_rates: " << endl;
     transition_rates.print();
     cerr << endl;
     cerr << "creating transition matrices\t\t\t" ; t = clock();
@@ -213,7 +213,7 @@ int main ( int argc, char *argv[] ) {
     /// output forward-backward full probability distribution by default
     else {
         cerr << (double) (clock() - t) << " ms" << endl;
-        cout << "TR_LOG: transition_matrix[2][0]: " << endl;
+        cout << "\n(TR_LOG) transition_matrix[2][0]: " << endl;
         transition_matrix[2][1].print();
         cerr << "computing forward probabilities\t" ; t = clock() ;
         double lnl = 0 ;
