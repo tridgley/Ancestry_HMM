@@ -45,11 +45,9 @@ void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vecto
         mat segment_transitions ;
         if ( recombination_rate[p] > 0.49 ) {
             segment_transitions = exp_matrix( site_transitions, 2 ) ;
-            // segment_transitions = expmat(site_transitions);
         }
         else {
             segment_transitions = exp_matrix( site_transitions, positions[p] - positions[p-1] ) ;
-            // segment_transitions = expmat(site_transitions);
         }
                 
         /// population transitions by summing across all routes
@@ -63,12 +61,14 @@ void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vecto
                     transition_matrix[number_chromosomes][p](j,i) += prob_t * t->second ;
                 }
             }
-        }        
+        }
+        cout << "(TR_LOG) transition_matrix at position " << p << endl;
+        transition_matrix[number_chromosomes][p].print();
     }
 }
 
 //// create all transition rates between ancestry types for a single chromosome
-mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<double> ancestry_proportion, bool gc, double gc_mean_dist, double gc_frac, double gc_rate ) {
+mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<double> ancestry_proportion, bool gc, double gc_mean_dist, double gc_frac) {
     
     /// determine ancestry proportions based on the fraction of remainder
     for ( int p = 0 ; p < admixture_pulses.size() ; p ++ ) {

@@ -213,8 +213,10 @@ int main ( int argc, char *argv[] ) {
     /// output forward-backward full probability distribution by default
     else {
         cerr << (double) (clock() - t) << " ms" << endl;
-        cout << "\n(TR_LOG) transition_matrix[2][0]: " << endl;
-        transition_matrix[2][1].print();
+        cout << "\n(TR_LOG) transition_matrix[2][77]: " << endl;
+        transition_matrix[2][77].print();
+        cout << "\n(TR_LOG) transition_matrix[2][78]: " << endl;
+        transition_matrix[2][78].print();
         cerr << "computing forward probabilities\t" ; t = clock() ;
         double lnl = 0 ;
         for ( int m = 0 ; m < markov_chain_information.size() ; m ++ ) {
