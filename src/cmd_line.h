@@ -67,6 +67,9 @@ public:
     // the rate of gene conversion in the model species.
     double gc_rate;
     
+    // the fraction of double strand breaks that resolve as GC vs CO
+    double gc_frac;
+    
     /// input file name
     string input_file ;
     

@@ -5,7 +5,7 @@
 double evaluate_vertex( vector<pulse> &vertex, vector<markov_chain> &markov_chain_information, map<int, vector<vector< map< vector<transition_information>, double > > > > &transition_matrix_information, vector<double> &recombination_rate, vector<int> &position, cmd_line &options, map<int,vector<vector<int> > > &state_changes ) {
     
     /// create single chromosome transition matrix for single chromosomes
-    mat transition_rates = create_transition_rates( vertex, options.ne, options.ancestry_proportion, options.gc, options.gc_mean_dist) ;
+    mat transition_rates = create_transition_rates( vertex, options.ne, options.ancestry_proportion, options.gc, options.gc_mean_dist, options.gc_frac) ;
 
     /// create transition matrix for all ploidies
     map<int,vector<mat> > transition_matrix ;

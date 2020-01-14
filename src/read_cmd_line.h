@@ -25,6 +25,7 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
     gc = false;
     gc_mean_dist = 0.001;
     gc_rate = 0.001;
+    gc_frac = 0.9;
     
     /// error rates
     error_rates = false ;
@@ -128,6 +129,7 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
             gc = true;
             gc_mean_dist = atof(argv[++i]);
             gc_rate = atof(argv[++i]);
+            gc_frac = atof(argv[++i]);
         }
     
         //// for each ancestry type, set the total ancestry fraction

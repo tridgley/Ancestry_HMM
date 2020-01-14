@@ -183,7 +183,7 @@ int main ( int argc, char *argv[] ) {
     
     /// create transition rates for the optimal or supplied set of pulses
     cerr << endl << "creating per morgan transition rates\t\t" ; t = clock();
-    mat transition_rates = create_transition_rates( optimum, options.ne, options.ancestry_proportion, options.gc, options.gc_mean_dist) ;
+    mat transition_rates = create_transition_rates( optimum, options.ne, options.ancestry_proportion, options.gc, options.gc_mean_dist, options.gc_frac ) ;
     
     /// create transition information
     cerr << (double) (clock() - t) << " ms" << endl;

@@ -2,7 +2,7 @@
 #define __CREATE_TRANSITION_RATES_H
 
 //// create transition matrix for a given admixture model
-void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vector<vector< map< vector<transition_information>, double > > > &transition_info, vector<double> &recombination_rate, vector<int> &positions, double &number_chromosomes, mat &transition_rates ) {
+void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vector<vector< map< vector<transition_information>, double > > > &transition_info, vector<double> &recombination_rate, vector<int> &positions, double &number_chromosomes, mat &transition_rates) {
     
     /// check if we already computed this for this sample ploidy
     if ( transition_matrix.find( number_chromosomes ) != transition_matrix.end() ) {
@@ -68,7 +68,7 @@ void create_transition_matrix ( map<int,vector<mat> > &transition_matrix , vecto
 }
 
 //// create all transition rates between ancestry types for a single chromosome
-mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<double> ancestry_proportion, bool gc, double gc_mean_dist ) {
+mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<double> ancestry_proportion, bool gc, double gc_mean_dist, double gc_frac, double gc_rate ) {
     
     /// determine ancestry proportions based on the fraction of remainder
     for ( int p = 0 ; p < admixture_pulses.size() ; p ++ ) {
@@ -140,9 +140,9 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
                 // Add the gene conversion transition rates below diag...
                 if (gc == true && admixture_pulses.size() == 2 && transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order) > 0) {
                     // Rate into a gene conversion tract
-                    transition_rates(admixture_pulses[s2].entry_order + admixture_pulses.size(), admixture_pulses[s1].entry_order) = transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
+                    transition_rates(admixture_pulses[s2].entry_order + admixture_pulses.size(), admixture_pulses[s1].entry_order) = (gc_frac / (1-gc_frac)) * transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
                     //Rate out of a gene conversion tract
-                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + admixture_pulses.size()) = gc_mean_dist;
+                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + admixture_pulses.size()) = 1 / gc_mean_dist;
                 }
             }
             else {
@@ -177,9 +177,9 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
                 // Add the gene conversion rates above diag...
                 if (gc == true && admixture_pulses.size() == 2 && transition_rates(admixture_pulses[s2].entry_order,admixture_pulses[s1].entry_order)) {
                         // Transition rate into a gene conversion tract.
-                        transition_rates(admixture_pulses[s2].entry_order + admixture_pulses.size(), admixture_pulses[s1].entry_order) = transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
+                        transition_rates(admixture_pulses[s2].entry_order + admixture_pulses.size(), admixture_pulses[s1].entry_order) = (gc_frac / (1-gc_frac)) * transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
                         // Transition rate out of a gene conversion tract.
-                        transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + admixture_pulses.size()) = gc_mean_dist;
+                        transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + admixture_pulses.size()) = 1 / gc_mean_dist;
                 }
             }
         }
