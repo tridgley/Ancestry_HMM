@@ -130,6 +130,12 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
             gc_mean_dist = atof(argv[++i]);
             gc_rate = atof(argv[++i]);
             gc_frac = atof(argv[++i]);
+            int anc_pulse_count = ancestry_pulses.size();
+            for( int i = 0; i < anc_pulse_count; ++i ) {
+                ancestry_pulses.push_back(ancestry_pulses.at(i));
+                ancestry_pulses.back().entry_order = ancestry_pulses.size() - 1;
+                ancestry_pulses.back().proportion = 0.01;
+            }
         }
     
         //// for each ancestry type, set the total ancestry fraction
