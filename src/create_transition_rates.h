@@ -150,8 +150,10 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
                 if (gc == true && anc_pulses == 2 && transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order) > 0) {
                     // Rate into a gene conversion tract
                     transition_rates(admixture_pulses[s2].entry_order + anc_pulses, admixture_pulses[s1].entry_order) = (gc_frac / (1-gc_frac)) * transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
-                    //Rate out of a gene conversion tract
-                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + anc_pulses) = 1 / gc_mean_dist;
+                    // Rate out of a GC_1 tract to ancestry 0
+                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + anc_pulses) = 1 / gc_mean_dist + transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
+                    // Rate out of a GC_0 tract to ancestry 0
+                    transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + 1) = transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
                 }
             }
             else {
@@ -187,8 +189,10 @@ mat create_transition_rates ( vector<pulse> admixture_pulses, double n, vector<d
                 if (gc == true && anc_pulses == 2 && transition_rates(admixture_pulses[s2].entry_order,admixture_pulses[s1].entry_order) > 0) {
                         // Transition rate into a gene conversion tract.
                         transition_rates(admixture_pulses[s2].entry_order + anc_pulses, admixture_pulses[s1].entry_order) = (gc_frac / (1-gc_frac)) * transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
-                        // Transition rate out of a gene conversion tract.
-                        transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + anc_pulses) = 1 / gc_mean_dist;
+                        // Transition rate out of a GC0 tract to ancestry 1.
+                        transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + anc_pulses) = 1 / gc_mean_dist + transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
+                        // Transition rate out of a GC tract to same ancestry.
+                        transition_rates(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order + anc_pulses + 1) = transition_rates.at(admixture_pulses[s2].entry_order, admixture_pulses[s1].entry_order);
                 }
             }
         }
